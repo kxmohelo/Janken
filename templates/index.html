@@ -12,13 +12,12 @@
         }
 
         .app-bar {
-            background-color: #101214;
             padding: 15px;
             text-align: center;
             font-size: 2.0em;
             font-weight: 700;
             font-family: Arial, sans-serif;
-            box-shadow: 0 2px 5px rgba(0, 0, 0,1);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
         }
 
         .container {
@@ -68,29 +67,120 @@
             padding: 10px 40px  10px 40px;
             border-radius: 10px;
             cursor: pointer;
-            background-color: #101214;
+            color: inherit;
         }
 
         .shake-animation {
-            animation: shake 0.5s ease infinite;
+            animation: shake 1s ease infinite;
         }
 
         @keyframes shake {
             0%, 100% {
-                transform: translateX(0);
+                transform: translateY(0) rotate(0);
             }
-            25%, 75% {
-                transform: translateX(-5px);
+            25% {
+                transform: translateY(-10px) rotate(-30deg);
             }
             50% {
-                transform: translateX(5px);
+                transform: translateY(0) rotate(0);
             }
+            75% {
+                transform: translateY(10px) rotate(30deg);
+            }
+        }
+
+        .dark-theme {
+            background-color: #161A1D;
+            color: #C7D1DB;
+        }
+
+        .light-theme {
+            background-color: #C7D1DB;
+            color: #161A1D;
+        }
+
+        .app-bar-dark {
+            background-color: #101214;
+        }
+
+        .app-bar-light {
+            background-color: #DEE4EA;
+        }
+
+        .switch {
+            position: absolute;
+            right: 20px;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input { 
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #C7D1DB;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: #C7D1DB;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        input:checked + .slider {
+            background-color: #161A1D;
+            box-shadow: 0 0 1px rgba(255, 255, 255, 0.085);
+        }
+
+        input:not(:checked) + .slider {
+            background-color: #C7D1DB; 
+        }
+
+        input:checked + .slider:before {
+            -webkit-transform: translateX(26px);
+            -ms-transform: translateX(26px);
+            transform: translateX(26px);
+        }
+
+        /* rounded sliders */
+        .slider.round {
+            border-radius: 34px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        input:not(:checked) + .slider.round:before {
+            background-color: #161A1D;
         }
     </style>
 </head>
-<body class="dark-theme">
-    <div class="app-bar">
+<body class="dark-theme" onload="loadTheme()">
+    <div class="app-bar app-bar-dark">
         Janken
+        <label class="switch">
+            <input type="checkbox" checked onchange="changeTheme(this.checked)">
+            <span class="slider round"></span>
+        </label>
     </div>
     <div class="container">
         <div style="height: 25vh;"></div>
@@ -117,7 +207,7 @@
                 <img src="{{ url_for('static', filename='rock_rhs.png') }}" alt="Rock" class="min-img-size shake-animation rhs">
             </div>
 
-            <div class="button" style="display: none;" onclick="playAgain()">
+            <div class="button app-bar-dark" style="display: none;" onclick="playAgain()">
                 Play again
             </div>
         </div>
@@ -136,6 +226,43 @@
         document.querySelector('.button').addEventListener('click', function () {
             resetGame();
         });
+
+        function loadTheme() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const themeParam = urlParams.get('theme');
+
+            if (themeParam === 'light') {
+                changeTheme(false);
+            } else {
+                changeTheme(true);
+            }
+        }
+
+        function changeTheme(value) {
+            var useDarkTheme = value;
+
+            var bodyThemeToReplace = useDarkTheme ? 'light-theme' : 'dark-theme'; 
+            var bodyReplacementTheme = useDarkTheme ? 'dark-theme' : 'light-theme';
+            
+            // update body theme
+            document.body.classList.replace(bodyThemeToReplace, bodyReplacementTheme);
+
+            var appBarThemeToReplace = useDarkTheme ? 'app-bar-light' : 'app-bar-dark'; 
+            var appBarReplacementTheme = useDarkTheme ? 'app-bar-dark' : 'app-bar-light';
+            
+            // update app bar theme
+            document.querySelector('.app-bar').classList.replace(appBarThemeToReplace, appBarReplacementTheme);
+            
+            // update button theme
+            document.querySelector('.button').classList.replace(appBarThemeToReplace, appBarReplacementTheme);
+
+            // save theme setting in history
+            if (useDarkTheme) {
+                history.pushState({}, document.title, '?theme=dark');
+            } else {
+                history.pushState({}, document.title, '?theme=light');
+            }
+        }
 
         function playGame(choice) {
             // hide the 'choose your hand' title
