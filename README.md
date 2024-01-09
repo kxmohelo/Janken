@@ -12,7 +12,7 @@ This is a simple Rock-Paper-Scissors game with a web interface using Python and 
     pip install Flask
     ```
 
-3. Save three hand images (`rock.png`, `paper.png`, and `scissors.png`) in a folder named `static` in the same directory as `app.py`.
+3. Make sure the three hand images (`rock.png`, `paper.png`, and `scissors.png`) are in the `static` folder found in the root directory.
 
 4. Run the Flask app:
 
