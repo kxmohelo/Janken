@@ -4,7 +4,7 @@ This is a simple Rock-Paper-Scissors game with a web interface using Python and 
 
 ## How to Run the Game
 
-1. Make sure you have Python installed on your machine. See [www.python.org](https://www.python.org)
+1. Make sure you have Python installed on your machine. See [www.python.org](https://www.python.org).
 
 2. Install the required packages:
 
@@ -22,12 +22,10 @@ This is a simple Rock-Paper-Scissors game with a web interface using Python and 
 
 5. Open your web browser and go to [http://127.0.0.1:5000/](http://127.0.0.1:5000/).
 
-5000/).
-
 ## How to Play
 
-- Choose your hand by clicking on the respective image, then the game result will be displayed after the hand shake countdown.
-- A **'play again' button will show when the results are displayed - to continue playing.
+- Choose your hand by clicking on the respective hand image, then the game result will be displayed after the hand shake countdown.
+- A **play again** button will show when the results are displayed - *to continue playing*.
 
 ## File Structure
 
