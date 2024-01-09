@@ -22,9 +22,12 @@ This is a simple Rock-Paper-Scissors game with a web interface using Python and 
 
 5. Open your web browser and go to [http://127.0.0.1:5000/](http://127.0.0.1:5000/).
 
-6. Choose your hand by clicking on the respective image.
+5000/).
 
-7. Two rock images will shake during the countdown, and then the game result will be displayed.
+## How to Play
+
+- Choose your hand by clicking on the respective image, then the game result will be displayed after the hand shake countdown.
+- A 'play again' button will show when the results are displayed - to continue playing.
 
 ## File Structure
 
