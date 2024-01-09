@@ -1,1 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Janken Game</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
 
+        .app-bar {
+            background-color: #101214;
+            padding: 15px;
+            text-align: center;
+            font-size: 2.0em;
+            font-weight: 700;
+            font-family: Arial, sans-serif;
+            box-shadow: 0 2px 5px rgba(0, 0, 0,1);
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-around;
+            width: 100%;
+        }
+        
+        .result {
+            margin-top: 10px;
+        }
+
+        .hand {
+            cursor: pointer;
+            margin: 10px;
+            padding-bottom: 15px;
+        }
+
+        .hand:hover {
+            background-color: #282E33;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s ease; 
+        }
+
+        .hand-container {
+            display: flex;
+            flex-direction: row;
+            text-align: center;
+        }
+
+        .min-img-size {
+            max-height: 20vh;
+        }
+
+        .button {
+            margin: 60px;
+            padding: 10px 40px  10px 40px;
+            border-radius: 10px;
+            cursor: pointer;
+            background-color: #101214;
+        }
+
+        .shake-animation {
+            animation: shake 0.5s ease infinite;
+        }
+
+        @keyframes shake {
+            0%, 100% {
+                transform: translateX(0);
+            }
+            25%, 75% {
+                transform: translateX(-5px);
+            }
+            50% {
+                transform: translateX(5px);
+            }
+        }
+    </style>
+</head>
+<body class="dark-theme">
+    <div class="app-bar">
+        Janken
+    </div>
+    <div class="container">
+        <div style="height: 25vh;"></div>
+        <div class="content">
+            <h2 class="content-title">Choose your hand:</h2>
+
+            <div class="hand-container">
+                <div class="hand">
+                    <img src="{{ url_for('static', filename='rock.png') }}" alt="Rock" class="min-img-size" onclick="playGame('Rock')">
+                    <div class="title">Rock</div>
+                </div>
+                <div class="hand">
+                    <img src="{{ url_for('static', filename='paper.png') }}" alt="Paper" class="min-img-size" onclick="playGame('Paper')">
+                    <div class="title">Paper</div>
+                </div>
+                <div class="hand">
+                    <img src="{{ url_for('static', filename='scissors.png') }}" alt="Scissors" class="min-img-size" onclick="playGame('Scissors')">
+                    <div class="title">Scissors</div>
+                </div>
+            </div>
+
+            <div class="result" style="display: none;">
+                <img src="{{ url_for('static', filename='rock_lhs.png') }}" alt="Rock" class="min-img-size shake-animation lhs">
+                <img src="{{ url_for('static', filename='rock_rhs.png') }}" alt="Rock" class="min-img-size shake-animation rhs">
+            </div>
+
+            <div class="button" style="display: none;" onclick="playAgain()">
+                Play again
+            </div>
+        </div>
+    </div>
+    <script>
+        // a map to get the path of the image given the hand name and side
+        var handImagePathMap = {
+            "rock_rhs": "{{ url_for('static', filename='rock_rhs.png') }}",
+            "rock_lhs": "{{ url_for('static', filename='rock_lhs.png') }}",
+            "paper_rhs": "{{ url_for('static', filename='paper_rhs.png') }}",
+            "paper_lhs": "{{ url_for('static', filename='paper_lhs.png') }}",
+            "scissors_rhs": "{{ url_for('static', filename='scissors_rhs.png') }}",
+            "scissors_lhs": "{{ url_for('static', filename='scissors_lhs.png') }}"
+        };
+
+        document.querySelector('.button').addEventListener('click', function () {
+            resetGame();
+        });
+
+        function playGame(choice) {
+            // hide the 'choose your hand' title
+            document.querySelector(".content-title").innerHTML = "";
+
+            // hide the 'choose your hand' options
+            document.querySelector(".hand-container").style.display = "none";
+            
+            // show the shaking hands
+            document.querySelector(".result").style.display = "flex";
+            document.querySelector(".result").style.flexDirection = "row";
+
+            // get the .rhs and .lhs images elements
+            var rhsImage = document.querySelector(".rhs");
+            var lhsImage = document.querySelector(".lhs");
+
+            setTimeout(function () {
+                var request = new XMLHttpRequest();
+
+                request.open("POST", "/play", true);
+                request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+
+                request.onreadystatechange = function () {
+                    if (request.readyState == 4 && request.status == 200) {
+                        // get the results from the api request
+                        var result = JSON.parse(request.responseText);
+
+                        // update the content title
+                        document.querySelector(".content-title").innerHTML = result.result;
+
+                        var computer_choice = result.computer_choice;
+                        var user_choice = result.user_choice;
+                        var game_result = result.result;
+
+                        // replace the .lhs image src
+                        lhsImage.src = handImagePathMap[computer_choice.toLowerCase() + '_lhs'];
+                        lhsImage.alt = computer_choice;
+                        lhsImage.classList.remove('shake-animation');
+
+                        // replace the .rhs image src
+                        rhsImage.src = handImagePathMap[user_choice.toLowerCase() + '_rhs'];
+                        rhsImage.alt = user_choice;
+                        rhsImage.classList.remove('shake-animation');
+
+                        // show the shaking hands
+                        document.querySelector(".button").style.display = "flex";
+                        document.querySelector(".button").style.flexDirection = "row";
+                    }
+                };
+
+                // make a request to the api
+                request.send(JSON.stringify({ choice: choice }));
+
+            }, 3000);
+        }
+
+        function resetGame() {
+            location.reload();
+        }
+    </script>
+</body>
+</html>
