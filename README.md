@@ -12,15 +12,25 @@ This is a simple Rock-Paper-Scissors game with a web interface using Python and 
     pip install Flask
     ```
 
-3. Make sure the three hand images (`rock.png`, `paper.png`, and `scissors.png`) are in the `static` folder found in the project root directory.
+3. Make sure the image assets below are in the `/static` folder found in the project root directory:
 
-4. Run the Flask app:
+   - `paper.png`
+   - `paper_lhs.png`
+   - `paper_rhs.png`
+   - `rock.png`
+   - `rock_lhs.png`
+   - `rock_rhs.png`
+   - `scissors.png`
+   - `scissors_lhs.png`
+   - `scissors_rhs.png`
+
+5. Run the Flask app:
 
     ```bash
     python app.py
     ```
 
-5. Open your web browser and go to [http://127.0.0.1:5000/](http://127.0.0.1:5000/).
+6. Open your web browser and go to [http://127.0.0.1:5000/](http://127.0.0.1:5000/).
 
 ## How to Play
 
